@@ -1,14 +1,15 @@
 package com.pieisnotpi.game.tiles.animations;
 
+import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.tiles.GameTile;
 import org.joml.Vector2f;
 
 public class MoveAnimation extends TileAnimation
 {
     private Vector2f s = new Vector2f(), n = new Vector2f();
-    public float speed;
+    private float speed;
 
-    public static final float MOVE_SPEED = 8.0f;
+    private static final float MOVE_SPEED = 3.7f;
 
     public MoveAnimation(GameTile tile)
     {
@@ -22,7 +23,7 @@ public class MoveAnimation extends TileAnimation
         s.set(sx, sy);
         n.set(nx, ny);
 
-        speed = MOVE_SPEED*((nx - sx) + (ny - sy));
+        speed = ((nx - sx) + (ny - sy))/Constants.size*MOVE_SPEED;
         started = true;
         finished = false;
 

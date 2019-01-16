@@ -8,19 +8,24 @@ public class Main
 {
     public static void main(String[] args)
     {
-        if(args.length > 0 && args[0].equals("novsync")) MainInstance.vsync = false;
+        for (String arg : args)
+        {
+            if(arg.equals("novsync")) MainInstance.vsync = false;
+            else if(arg.equals("noaa")) MainInstance.aa = false;
+        }
+
         System.setProperty("org.lwjgl.librarypath", "natives");
 
         if(args.length == 2)
         {
             try
             {
-                MainInstance.w = Integer.parseInt(args[0]);
-                MainInstance.h = Integer.parseInt(args[1]);
+                MainInstance.dw = Integer.parseInt(args[0]);
+                MainInstance.dh = Integer.parseInt(args[1]);
             }
             catch(NumberFormatException e)
             {
-                MainInstance.w = MainInstance.h = 4;
+                MainInstance.dw = MainInstance.dh = 4;
             }
         }
 

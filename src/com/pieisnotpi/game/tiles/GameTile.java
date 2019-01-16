@@ -1,21 +1,20 @@
 package com.pieisnotpi.game.tiles;
 
 import com.pieisnotpi.engine.rendering.cameras.Camera;
-import com.pieisnotpi.engine.rendering.mesh.MeshConfig;
 import com.pieisnotpi.engine.scene.GameObject;
 import com.pieisnotpi.engine.ui.text.Text;
 import com.pieisnotpi.engine.utility.Color;
+import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.scenes.GameScene;
-import com.pieisnotpi.game.shaders.tile_shader.TileQuad;
 import com.pieisnotpi.game.tiles.animations.MoveAnimation;
 import com.pieisnotpi.game.tiles.animations.ScaleAnimation;
 import org.joml.Vector3f;
 
-public class GameTile extends GameObject<TileQuad>
+public class GameTile extends GameObject
 {
     private Text text;
     private GameScene scene;
-    private TileQuad quad;
+    private TileMesh mesh;
     public boolean merged = false, shouldDestroy = false;
 
     private MoveAnimation moveAnimation = new MoveAnimation(this);
@@ -35,12 +34,13 @@ public class GameTile extends GameObject<TileQuad>
         this.tileX = tileX;
         this.tileY = tileY;
 
-        createMesh(GameScene.gridMaterial, MeshConfig.QUAD);
-        text = new Text(GameScene.tileFont, "", new Vector3f(), new Color(0, 0, 0), new Color(1, 1, 1), Camera.ORTHO2D_S);
+        mesh = new TileMesh();
+
+        createRenderable(0, 0, mesh);
+        text = new Text(Constants.tileFont, "", new Vector3f(), new Color(0, 0, 0), new Color(1, 1, 1), Camera.ORTHO2D_S);
         addChild(text);
 
         text.getTransform().setScale(TEXT_SCALE*size);
-        mesh.addRenderable(quad = new TileQuad(0, 0, -0.05f, size, size, 0, GameScene.sprite, new Color(0, 0, 0)));
 
         BackTile tile = scene.backTiles[tileX][tileY];
         transform.translate(tile.x, tile.y, 0).setCenter(size/2, size/2, size/2);
@@ -68,7 +68,8 @@ public class GameTile extends GameObject<TileQuad>
         else
         {
             scene.deletionQue.add(this);
-            mesh.getTransform().translateAbs(0, 0, -0.1f);
+            renderable.getTransform().translate(0, 0, -0.1f);
+
         }
 
         this.destroyOnFinish = destroyOnFinish;
@@ -89,8 +90,7 @@ public class GameTile extends GameObject<TileQuad>
 
         Color tileColor = scene.getTileColor(value), textColor = scene.getTextColor(value);
 
-        quad.setQuadColors(tileColor);
-        mesh.flagForBuild();
+        mesh.setTileColor(tileColor);
         text.setTextColor(textColor);
         text.setText(value + "");
         text.getTransform().setTranslateAbs(size/2 - text.getWidth()/2, size/2 - text.getHeight()/2, 0);

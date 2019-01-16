@@ -11,27 +11,33 @@ import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.UiObject;
 import com.pieisnotpi.engine.ui.text.font.CharSprite;
 import com.pieisnotpi.engine.utility.Color;
-import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.scenes.GameScene;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 
-public class RestartButton extends UiObject
+import static com.pieisnotpi.game.Constants.menuZ;
+
+public class OptionsButton extends UiObject
 {
     private static final CharSprite sprite = new CharSprite(new Sprite(0f, 0f, 1f, 1f), ' ', 0, 0);
-    
-    private final TextMaterial material = new TextMaterial(Camera.ORTHO2D_S, Texture.getTextureFile("refresh.png", Texture.FILTER_LINEAR));
+
+    private final TextMaterial material = new TextMaterial(Camera.ORTHO2D_S, Texture.getTextureFile("gear.png", Texture.FILTER_LINEAR));
     private GameScene scene;
-    private Vector2f pos;
-    
-    public RestartButton(Color normal, Color highlight)
+    private OptionsMenu menu;
+    private Vector3f pos;
+
+    public OptionsButton(Color normal, Color highlight, OptionsMenu menu)
     {
-        pos = new Vector2f(0.45f, 0.75f);
+        this.menu = menu;
+
+        pos = transform.pos;
         size.set(0.15f, 0.15f, 0);
-    
-        TextQuad quad = new TextQuad(0, 0, Constants.menuBgZ - 0.05f, size.x, size.y, sprite, normal, highlight, 0);
+
+        TextQuad quad = new TextQuad(0, 0, menuZ, size.x, size.y, sprite, normal, highlight, 0);
         Mesh<TextQuad> mesh = new Mesh<TextQuad>(material, MeshConfig.QUAD_STATIC).addPrimitive(quad).build();
         createRenderable(1, 0, mesh);
-        transform.setTranslate(pos.x, pos.y, 0);
+
+        transform.setTranslate(-0.6f, 0.75f, 0);
     }
     
     @Override
@@ -39,14 +45,23 @@ public class RestartButton extends UiObject
     {
         super.onLeftClick();
         
-        if(mouseHoverStatus) scene.restart = true;
+        if(mouseHoverStatus)
+        {
+            if(GameScene.menuOpen)
+            {
+                scene.nw = menu.w;
+                scene.nh = menu.h;
+                GameScene.closeOptions = true;
+            }
+            else GameScene.openOptions = true;
+        }
     }
     
     @Override
     public void onMouseEntered()
     {
         super.onMouseEntered();
-        material.outlineSize = 3;
+        material.outlineSize = 4;
     }
     
     @Override
@@ -61,7 +76,7 @@ public class RestartButton extends UiObject
     {
         return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y;
     }
-    
+
     @Override
     public void onRegister(Scene scene)
     {
