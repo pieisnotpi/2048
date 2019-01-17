@@ -101,8 +101,6 @@ public class GameScene extends Scene
             
         }, null, null));
 
-        endMenu.openWithLoss(42000000);
-
         return this;
     }
 
