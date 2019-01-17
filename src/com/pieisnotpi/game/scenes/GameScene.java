@@ -76,8 +76,6 @@ public class GameScene extends Scene
         addGameObject(new OptionsButton(colors.getTextColor(2), colors.getTextColor(2), optionsMenu));
         
         exitButton = new ExitButton(colors.getTextColor(2), colors.getTextColor(2));
-        
-        genTiles(2);
 
         // Debug tile placement
         /*setTile(0, 0, 2);
