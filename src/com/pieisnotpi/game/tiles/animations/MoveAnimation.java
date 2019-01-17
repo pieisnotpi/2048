@@ -9,8 +9,6 @@ public class MoveAnimation extends TileAnimation
     private Vector2f s = new Vector2f(), n = new Vector2f();
     private float speed;
 
-    private static final float MOVE_SPEED = 3.7f;
-
     public MoveAnimation(GameTile tile)
     {
         super(tile);
@@ -23,7 +21,7 @@ public class MoveAnimation extends TileAnimation
         s.set(sx, sy);
         n.set(nx, ny);
 
-        speed = ((nx - sx) + (ny - sy))/Constants.size*MOVE_SPEED;
+        speed = ((nx - sx) + (ny - sy))*Constants.TILE_SPEED;
         started = true;
         finished = false;
 

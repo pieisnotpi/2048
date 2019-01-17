@@ -30,7 +30,7 @@ public class ExitButton extends UiObject
         matrixID = Camera.ORTHO2D_S;
         setHAlignment(HAlignment.RIGHT, -0.25f);
 
-        TextQuad quad = new TextQuad(0, 0, Constants.menuBgZ - 0.05f, size.x, size.y, sprite, normal, highlight, 0);
+        TextQuad quad = new TextQuad(0, 0, Constants.MENU_BG_Z - 0.05f, size.x, size.y, sprite, normal, highlight, 0);
         Mesh<TextQuad> mesh = new Mesh<TextQuad>(material, MeshConfig.QUAD_STATIC).addPrimitive(quad).build();
         createRenderable(1, 0, mesh);
         transform.setTranslate(0, 0.75f, 0);

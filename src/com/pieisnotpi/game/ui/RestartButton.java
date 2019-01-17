@@ -7,7 +7,6 @@ import com.pieisnotpi.engine.rendering.shaders.types.text.TextMaterial;
 import com.pieisnotpi.engine.rendering.shaders.types.text.TextQuad;
 import com.pieisnotpi.engine.rendering.textures.Sprite;
 import com.pieisnotpi.engine.rendering.textures.Texture;
-import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.UiObject;
 import com.pieisnotpi.engine.ui.text.font.CharSprite;
 import com.pieisnotpi.engine.utility.Color;
@@ -20,7 +19,6 @@ public class RestartButton extends UiObject
     private static final CharSprite sprite = new CharSprite(new Sprite(0f, 0f, 1f, 1f), ' ', 0, 0);
     
     private final TextMaterial material = new TextMaterial(Camera.ORTHO2D_S, Texture.getTextureFile("refresh.png", Texture.FILTER_LINEAR));
-    private GameScene scene;
     private Vector2f pos;
     
     public RestartButton(Color normal, Color highlight)
@@ -28,7 +26,7 @@ public class RestartButton extends UiObject
         pos = new Vector2f(0.45f, 0.75f);
         size.set(0.15f, 0.15f, 0);
     
-        TextQuad quad = new TextQuad(0, 0, Constants.menuBgZ - 0.05f, size.x, size.y, sprite, normal, highlight, 0);
+        TextQuad quad = new TextQuad(0, 0, Constants.MENU_BG_Z - 0.05f, size.x, size.y, sprite, normal, highlight, 0);
         Mesh<TextQuad> mesh = new Mesh<TextQuad>(material, MeshConfig.QUAD_STATIC).addPrimitive(quad).build();
         createRenderable(1, 0, mesh);
         transform.setTranslate(pos.x, pos.y, 0);
@@ -39,7 +37,7 @@ public class RestartButton extends UiObject
     {
         super.onLeftClick();
         
-        if(mouseHoverStatus) scene.restart = true;
+        if(mouseHoverStatus) GameScene.restartGame();
     }
     
     @Override
@@ -60,12 +58,5 @@ public class RestartButton extends UiObject
     public boolean isPointInsideObject(Vector2f point)
     {
         return point.x >= pos.x && point.x <= pos.x + size.x && point.y >= pos.y && point.y <= pos.y + size.y;
-    }
-    
-    @Override
-    public void onRegister(Scene scene)
-    {
-        super.onRegister(scene);
-        this.scene = (GameScene) scene;
     }
 }

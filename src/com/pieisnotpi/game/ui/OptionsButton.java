@@ -15,7 +15,7 @@ import com.pieisnotpi.game.scenes.GameScene;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import static com.pieisnotpi.game.Constants.menuZ;
+import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class OptionsButton extends UiObject
 {
@@ -33,7 +33,7 @@ public class OptionsButton extends UiObject
         pos = transform.pos;
         size.set(0.15f, 0.15f, 0);
 
-        TextQuad quad = new TextQuad(0, 0, menuZ, size.x, size.y, sprite, normal, highlight, 0);
+        TextQuad quad = new TextQuad(0, 0, MENU_Z, size.x, size.y, sprite, normal, highlight, 0);
         Mesh<TextQuad> mesh = new Mesh<TextQuad>(material, MeshConfig.QUAD_STATIC).addPrimitive(quad).build();
         createRenderable(1, 0, mesh);
 
@@ -47,13 +47,12 @@ public class OptionsButton extends UiObject
         
         if(mouseHoverStatus)
         {
-            if(GameScene.menuOpen)
+            if(menu.isOpen())
             {
-                scene.nw = menu.w;
-                scene.nh = menu.h;
-                GameScene.closeOptions = true;
+                scene.setNewBoardSize(menu.w, menu.h);
+                menu.closeMenu();
             }
-            else GameScene.openOptions = true;
+            else menu.openMenu();
         }
     }
     

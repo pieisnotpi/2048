@@ -11,10 +11,7 @@ import com.pieisnotpi.game.parsers.ColorParser;
 import com.pieisnotpi.game.tiles.BackTile;
 import com.pieisnotpi.game.tiles.Background;
 import com.pieisnotpi.game.tiles.GameTile;
-import com.pieisnotpi.game.ui.ExitButton;
-import com.pieisnotpi.game.ui.OptionsButton;
-import com.pieisnotpi.game.ui.OptionsMenu;
-import com.pieisnotpi.game.ui.RestartButton;
+import com.pieisnotpi.game.ui.*;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -29,21 +26,20 @@ public class GameScene extends Scene
 {
     private static final Random random = new Random();
 
-    public int w, h, nw, nh, score = 0;
+    private int w, h, nw, nh, score = 0;
 
     private Background bg;
     public List<GameTile> deletionQue = new ArrayList<>(10);
     public BackTile[][] backTiles;
     public GameTile[][] gameTiles;
-    public Text scoreText;
     public ColorParser colors;
-    public static boolean restart = false, openOptions = false, closeOptions = false, menuOpen = false;
+    private Text scoreText;
+    private static boolean restart = false, lockGameInput = false;
     
     private ExitButton exitButton;
     private OptionsMenu optionsMenu;
-    private Text loseText;
-    private float zoom = 1;
-    public boolean lost = false;
+    private EndMenu endMenu;
+    public boolean lost = false, won = false;
     private Vector2i mPos = new Vector2i();
 
     public GameScene(int w, int h)
@@ -61,17 +57,9 @@ public class GameScene extends Scene
         addCamera(new Camera(1, new Vector2f(0, 0), new Vector2f(1, 1)));
         clearColor.set(colors.getBackColor("bg"));
 
-        loseText = new Text(loseFont, "You have lost...", new Vector3f(), new Color("#FFFFE6"), new Color("#323232"), Camera.ORTHO2D_S);
-        addGameObject(loseText);
-        loseText.setAlignment(UiObject.HAlignment.CENTER, UiObject.VAlignment.CENTER, 0, 0.3f);
-        loseText.getTransform().setScale(0.004f);
-        loseText.setOutlineSize(2);
-
         setBoardSize(w, h);
-        
-        removeGameObject(loseText);
 
-        scoreText = new Text(scoreFont, "Score: " + score, new Vector3f(), Camera.ORTHO2D_S);
+        scoreText = new Text(SCORE_FONT, "Score: " + score, new Vector3f(), Camera.ORTHO2D_S);
         addGameObject(scoreText);
         scoreText.setTextColor(colors.getTextColor(2));
         scoreText.setAlignment(UiObject.HAlignment.CENTER, UiObject.VAlignment.TOP, 0, -0.1f);
@@ -80,6 +68,9 @@ public class GameScene extends Scene
 
         optionsMenu = new OptionsMenu(w, h, colors.getTextColor(2), clearColor);
         addGameObject(optionsMenu);
+
+        endMenu = new EndMenu(colors.getTextColor(2), clearColor);
+        addGameObject(endMenu);
 
         addGameObject(new RestartButton(colors.getTextColor(2), colors.getTextColor(2)));
         addGameObject(new OptionsButton(colors.getTextColor(2), colors.getTextColor(2), optionsMenu));
@@ -110,9 +101,138 @@ public class GameScene extends Scene
             
         }, null, null));
 
+        endMenu.openWithLoss(42000000);
+
         return this;
     }
 
+    /**
+     * Empties the game board, removing and destroying all tiles
+     */
+    public void clearBoard()
+    {
+        for(int x = 0; x < w; x++)
+        {
+            for(int y = 0; y < h; y++)
+            {
+                if(gameTiles[x][y] != null)
+                {
+                    gameTiles[x][y].destroy();
+                    gameTiles[x][y] = null;
+                }
+            }
+        }
+    }
+
+    /**
+     * Resets the game board, bringing it back to the default state
+     */
+    public void resetGame()
+    {
+        clearBoard();
+        genTiles(2);
+        score = 0;
+        scoreText.setText("Score: 0");
+        restart = false;
+        lost = false;
+    }
+
+    /**
+     * Sets the given tile coordinate to the given value
+     * If the space is already occupied, sets the occupying tile's value
+     * If it isn't, creates a new tile with the specified value
+     * @param x x-coordinate of the tile (in board coordinates)
+     * @param y y-coordinate of the tile (in board coordinates)
+     * @param value The tile's new value
+     */
+    public void setTile(int x, int y, int value)
+    {
+        if(gameTiles[x][y] != null) gameTiles[x][y].setValue(value);
+        else
+        {
+            gameTiles[x][y] = new GameTile(x, y, value, size, this);
+            addGameObject(gameTiles[x][y]);
+            bg.addChild(gameTiles[x][y]);
+        }
+    }
+
+    /**
+     * Sets the game score
+     * @param score New score value
+     */
+    public void setScore(int score)
+    {
+        this.score = score;
+        if(scoreText != null) scoreText.setText("Score: " + score);
+    }
+
+    /**
+     * Sets the board's new width and height
+     * Used by game objects that can't disturb engine flow
+     * @param newWidth New board width
+     * @param newHeight New board height
+     */
+    public void setNewBoardSize(int newWidth, int newHeight)
+    {
+        nw = newWidth;
+        nh = newHeight;
+    }
+
+    /**
+     * Returns board's current width
+     * @return Board width
+     */
+    public int getBoardWidth()
+    {
+        return w;
+    }
+
+    /**
+     * Returns board's current height
+     * @return Board height
+     */
+    public int getBoardHeight()
+    {
+        return h;
+    }
+
+    /**
+     * Returns current game score
+     * @return Game score
+     */
+    public int getScore()
+    {
+        return score;
+    }
+
+    /**
+     * Returns the tile color for the given tile value
+     * Returns default value if the tile value doesn't have a specified tile color
+     * @param value Tile value
+     * @return Tile color for the specified value
+     */
+    public Color getTileColor(int value)
+    {
+        return colors.getTileColor(value);
+    }
+
+    /**
+     * Returns the text color for the given tile value
+     * Returns default value if the tile value doesn't have a specified text color
+     * @param value Tile value
+     * @return Text color for the specified value
+     */
+    public Color getTextColor(int value)
+    {
+        return colors.getTextColor(value);
+    }
+
+    /**
+     * Sets the board's size to the given width and height
+     * Completely resets the board as a result
+     * @param w New width of the board
+     * @param h New height of the board
+     */
     private void setBoardSize(int w, int h)
     {
         if(bg != null)
@@ -132,7 +252,7 @@ public class GameScene extends Scene
 
         float qw = 2f/w, qh = 2f/h;
         size = Float.min(qw, qh);
-        radii = size/radiiDiv;
+        radii = size/RADII_DIV;
 
         bg = new Background(tileColor, bgColor, backTiles, w, h);
         addGameObject(bg);
@@ -142,11 +262,16 @@ public class GameScene extends Scene
         if(scoreText != null)
         {
             score = 0;
-            scoreText.setText("Score: " + score);
+            scoreText.setText("Score: 0");
         }
         if(window != null) onWindowResize(window.getWindowRes());
     }
 
+    /**
+     * Game state check for the tiles
+     * Checks each individual tile to see if it can move
+     * If no tiles can move, activates the 'game lost' procedure
+     */
     private void resetTiles()
     {
         boolean locked = true;
@@ -161,6 +286,12 @@ public class GameScene extends Scene
                 {
                     tile.merged = false;
 
+                    if(!won && tile.getValue() == 2048)
+                    {
+                        endMenu.openWithWin(score);
+                        won = true;
+                    }
+
                     if(locked && (tile.scanLeft() != x || tile.scanRight() != x || tile.scanDown() != y || tile.scanUp() != y)) locked = false;
                 }
                 else locked = false;
@@ -169,36 +300,16 @@ public class GameScene extends Scene
 
         if(locked)
         {
-            addGameObject(loseText);
+            endMenu.openWithLoss(score);
+            //addGameObject(loseText);
             lost = true;
         }
     }
 
-    public void clearBoard()
-    {
-        for(int x = 0; x < w; x++)
-        {
-            for(int y = 0; y < h; y++)
-            {
-                if(gameTiles[x][y] != null)
-                {
-                    gameTiles[x][y].destroy();
-                    gameTiles[x][y] = null;
-                }
-            }
-        }
-    }
-
-    public void resetGame()
-    {
-        clearBoard();
-        genTiles(2);
-        score = 0;
-        scoreText.setText("Score: 0");
-        restart = false;
-        lost = false;
-    }
-
+    /**
+     * Generates the specified number of tiles at random positions
+     * @param amount Number of tiles to generate
+     */
     private void genTiles(int amount)
     {
         for(int i = 0, x, y; i < amount; i++)
@@ -220,17 +331,11 @@ public class GameScene extends Scene
         }
     }
 
-    public void setTile(int x, int y, int value)
-    {
-        if(gameTiles[x][y] != null) gameTiles[x][y].setValue(value);
-        else
-        {
-            gameTiles[x][y] = new GameTile(x, y, value, size, this);
-            addGameObject(gameTiles[x][y]);
-            bg.addChild(gameTiles[x][y]);
-        }
-    }
-
+    /**
+     * Moves all tiles upward
+     * @return  true of any tiles successfully moved
+     *          false if no tiles moved
+     */
     private boolean moveTilesUp()
     {
         boolean moved = false;
@@ -256,6 +361,11 @@ public class GameScene extends Scene
         return moved;
     }
 
+    /**
+     * Moves all tiles downward
+     * @return  true of any tiles successfully moved
+     *          false if no tiles moved
+     */
     private boolean moveTilesDown()
     {
         boolean moved = false;
@@ -281,6 +391,11 @@ public class GameScene extends Scene
         return moved;
     }
 
+    /**
+     * Moves all tiles leftward
+     * @return  true of any tiles successfully moved
+     *          false if no tiles moved
+     */
     private boolean moveTilesLeft()
     {
         boolean moved = false;
@@ -306,6 +421,11 @@ public class GameScene extends Scene
         return moved;
     }
 
+    /**
+     * Moves all tiles rightward
+     * @return  true of any tiles successfully moved
+     *          false if no tiles moved
+     */
     private boolean moveTilesRight()
     {
         boolean moved = false;
@@ -331,72 +451,14 @@ public class GameScene extends Scene
         return moved;
     }
 
-    private int randInt(int min, int max)
-    {
-        return random.nextInt(max - min + 1) + min;
-    }
-    
-    @Override
-    public void onScroll(float xAmount, float yAmount)
-    {
-        super.onScroll(xAmount, yAmount);
-
-        if(openOptions) return;
-        
-        final float zoomOut = 0.25f, zoomIn = 1.1f;
-        float scale = bg.getTransform().scale.x;
-        
-        if(yAmount < 0)
-        {
-            float zoomAmount = 0.9f*scale > zoomOut ? 0.9f : zoomOut/(scale);
-            
-            bg.getTransform().scale(zoomAmount);
-            zoom *= zoomAmount;
-        }
-        else if(yAmount > 0)
-        {
-            float zoomAmount = 1.1f*scale < zoomIn ? 1.1f : zoomIn/(scale);
-    
-            bg.getTransform().scale(zoomAmount);
-            zoom *= zoomAmount;
-        }
-    }
-    
     @Override
     public void update(float timeStep) throws Exception
     {
         super.update(timeStep);
-        
+
         if(restart) resetGame();
 
-        if(openOptions)
-        {
-            //addGameObject(optionsMenu);
-            optionsMenu.open();
-            openOptions = false;
-            menuOpen = true;
-        }
-        if(closeOptions)
-        {
-            //removeGameObject(optionsMenu);
-            optionsMenu.close();
-            closeOptions = false;
-            menuOpen = false;
-        }
-        if(w != nw || h != nh)
-        {
-            setBoardSize(nw, nh);
-        }
-    }
-    
-    @Override
-    public void onWindowResize(Vector2i res)
-    {
-        super.onWindowResize(res);
-
-        float rx = (float) res.x/res.y, ratio = Float.min(rx, 1f);
-    
-        bg.getTransform().setScale(zoom*ratio/border);
+        if(w != nw || h != nh) setBoardSize(nw, nh);
     }
 
     @Override
@@ -421,20 +483,9 @@ public class GameScene extends Scene
     {
         super.onKeyPressed(key, mods);
 
-        if(menuOpen) return;
+        if(lockGameInput) return;
 
         boolean moved = false;
-
-        if(lost)
-        {
-            if(key < Keyboard.KEY_RIGHT || key > Keyboard.KEY_UP)
-            {
-                removeGameObject(loseText);
-                resetGame();
-            }
-
-            return;
-        }
 
         if(key == Keyboard.KEY_UP) moved = moveTilesUp();
         if(key == Keyboard.KEY_DOWN) moved = moveTilesDown();
@@ -450,7 +501,7 @@ public class GameScene extends Scene
     {
         super.onLeftClick();
 
-        if(menuOpen) return;
+        if(lockGameInput) return;
         
         mPos.set(window.inputManager.cursorPos);
     }
@@ -460,18 +511,10 @@ public class GameScene extends Scene
     {
         super.onLeftRelease();
 
-        if(menuOpen) return;
-
-        if(lost)
-        {
-            removeGameObject(loseText);
-            resetGame();
-
-            return;
-        }
+        if(lockGameInput) return;
 
         window.inputManager.cursorPos.sub(mPos, mPos);
-        
+
         int ax = Math.abs(mPos.x), ay = Math.abs(mPos.y);
         
         if(ax < 24 && ay < 24) return;
@@ -493,15 +536,49 @@ public class GameScene extends Scene
         resetTiles();
     }
 
-    public Color getTileColor(int value)
+    /**
+     * Tells the game to restart next update
+     * Used by game objects to trigger a restart since actual restarting causes a concurrent modification exception
+     */
+    public static void restartGame()
     {
-        return colors.getTileColor(value);
+        restart = true;
     }
 
-    public Color getTextColor(int value)
+    /**
+     * Locks game input. Prevents tile movements and zooming
+     */
+    public static void lockGameInput()
     {
-        return colors.getTextColor(value);
+        lockGameInput = true;
     }
 
+    /**
+     * Unlocks game input
+     */
+    public static void unlockGameInput()
+    {
+        lockGameInput = false;
+    }
 
+    /**
+     * Returns the game's input lock status
+     * @return True if input is locked
+     *         False otherwise
+     */
+    public static boolean isInputLocked()
+    {
+        return lockGameInput;
+    }
+
+    /**
+     * Generates a random integer in a range
+     * @param min Minimum integer value
+     * @param max Maximum integer value
+     * @return A random value
+     */
+    public static int randInt(int min, int max)
+    {
+        return random.nextInt(max - min + 1) + min;
+    }
 }

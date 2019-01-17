@@ -14,8 +14,8 @@ import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.scenes.GameScene;
 import org.joml.Vector3f;
 
-import static com.pieisnotpi.game.Constants.loseFont;
-import static com.pieisnotpi.game.Constants.menuZ;
+import static com.pieisnotpi.game.Constants.LOSE_FONT;
+import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class OptionsMenu extends GameObject
 {
@@ -25,6 +25,7 @@ public class OptionsMenu extends GameObject
     private static final float wPos = 0.15f, hPos = -0.4f, valOffset = 0.06f, textOffset = 0.15f, arrowOffset = 0.25f, textScale = 0.002f, valueScale = 0.002f;
 
     private float yMoveSpeed = 0, yDest;
+    private boolean open = false;
 
     public OptionsMenu(int width, int height, Color buttonColor, Color bgColor)
     {
@@ -33,11 +34,11 @@ public class OptionsMenu extends GameObject
 
         getTransform().translate(0, 2, 0);
 
-        Text wText = new Text(loseFont, "Width", new Vector3f(0, wPos + textOffset, menuZ), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        Text wText = new Text(LOSE_FONT, "Width", new Vector3f(0, wPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         wText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         wText.getTransform().setScale(textScale);
 
-        Text wValueText = new Text(loseFont, w + "", new Vector3f(0, wPos - valOffset, menuZ), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        Text wValueText = new Text(LOSE_FONT, w + "", new Vector3f(0, wPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         wValueText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         wValueText.getTransform().setScale(valueScale);
 
@@ -67,11 +68,11 @@ public class OptionsMenu extends GameObject
             }
         };
 
-        Text hText = new Text(loseFont, "Height", new Vector3f(0, hPos + textOffset, menuZ), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        Text hText = new Text(LOSE_FONT, "Height", new Vector3f(0, hPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         hText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         hText.getTransform().setScale(textScale);
 
-        Text hValueText = new Text(loseFont, h + "", new Vector3f(0, hPos - valOffset, menuZ), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        Text hValueText = new Text(LOSE_FONT, h + "", new Vector3f(0, hPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         hValueText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         hValueText.getTransform().setScale(valueScale);
 
@@ -112,20 +113,27 @@ public class OptionsMenu extends GameObject
         addChild(hValueText);
 
         Mesh<ColorQuad> bg = new Mesh<>(new ColorMaterial(Camera.ORTHO2D_S), MeshConfig.QUAD_STATIC);
-        bg.addPrimitive(new ColorQuad(-10, -1, Constants.menuBgZ, 20, 2, 0, bgColor));
+        bg.addPrimitive(new ColorQuad(-10, -1, Constants.MENU_BG_Z, 20, 2, 0, bgColor));
         createRenderable(0, 0, bg);
     }
 
-    public void open()
+    public void openMenu()
     {
         yMoveSpeed = -MOVE_SPEED;
         yDest = 0;
+        open = true;
+        GameScene.lockGameInput();
     }
 
-    public void close()
+    public void closeMenu()
     {
         yMoveSpeed = MOVE_SPEED;
         yDest = 2;
+    }
+
+    public boolean isOpen()
+    {
+        return open;
     }
 
     @Override
@@ -142,6 +150,11 @@ public class OptionsMenu extends GameObject
         if( (dy <= yDest - y && neg) || (dy >= yDest - y && !neg) )
         {
             transform.translate(0, yDest - y, 0);
+            if(yMoveSpeed > 0)
+            {
+                open = false;
+                GameScene.unlockGameInput();
+            }
             yMoveSpeed = 0;
         }
         else transform.translate(0, dy, 0);
@@ -152,6 +165,6 @@ public class OptionsMenu extends GameObject
     {
         super.onKeyPressed(key, mods);
 
-        if(key == Keyboard.KEY_ESCAPE) GameScene.closeOptions = true;
+        if(key == Keyboard.KEY_ESCAPE) closeMenu();
     }
 }

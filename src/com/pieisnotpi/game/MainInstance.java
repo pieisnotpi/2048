@@ -63,17 +63,14 @@ class MainInstance extends GameInstance
         {
             try(DataInputStream input = new DataInputStream(new FileInputStream(f)))
             {
-                s.score = input.readInt();
-                s.w = s.nw = input.readInt();
-                s.h = s.nh = input.readInt();
+                s.setScore(input.readInt());
+                s.setNewBoardSize(input.readInt(), input.readInt());
                 s.init();
-                
-                s.scoreText.setText("Score: " + s.score);
-            
+
                 s.clearBoard();
-                for(int y = 0; y < s.h; y++)
+                for(int y = 0; y < s.getBoardHeight(); y++)
                 {
-                    for(int x = 0; x < s.w; x++)
+                    for(int x = 0; x < s.getBoardWidth(); x++)
                     {
                         int value = input.readInt();
                         if(value != 0 && value != -1) s.setTile(x, y, value);
@@ -132,14 +129,14 @@ class MainInstance extends GameInstance
         
         try(DataOutputStream output = new DataOutputStream(new FileOutputStream(f)))
         {
-            output.writeInt(s.score);
-            output.writeInt(s.w);
-            output.writeInt(s.h);
+            output.writeInt(s.getScore());
+            output.writeInt(s.getBoardWidth());
+            output.writeInt(s.getBoardHeight());
     
             GameTile[][] tiles = s.gameTiles;
-            for(int y = 0; y < s.h; y++)
+            for(int y = 0; y < s.getBoardHeight(); y++)
             {
-                for(int x = 0; x < s.w; x++)
+                for(int x = 0; x < s.getBoardWidth(); x++)
                 {
                     GameTile t = tiles[x][y];
                     if(t != null) output.writeInt(tiles[x][y].getValue());

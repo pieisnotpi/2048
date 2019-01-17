@@ -7,7 +7,7 @@ public class Constants
     public static final int
 
             // The number of triangles per rounded corner. Ex. value of 4 = 4 sides per corner, 16 triangles per tile
-            cornerSides = 4;
+            CORNER_SIDES = 4;
 
     public static float
 
@@ -20,29 +20,33 @@ public class Constants
     public static final float
 
             // Space between game tiles
-            tileSpace = 0.04f,
+            TILE_SPACE = 0.04f,
 
             // Space between outer tiles and the background pane's outer edge
-            bgSpace = 0.04f,
+            BG_SPACE = 0.04f,
 
             // Determines whitespace around game board
-            border = 2.5f,
+            BORDER = 2.5f,
 
-            // Determines tile corner radii. Ex. value of 6 = a radius 1/6th the size of the tile
-            radiiDiv = 6,
+            // Determines tile corner radii. Higher values mean smaller corners. Must be > 2
+            // Radii = (size/RADII_DIV)
+            RADII_DIV = 6,
+
+            // Tile speed multiplier. Hire values mean faster tile movements
+            TILE_SPEED = 8f,
 
             // Depth values for all the rendered elements
             // Used to prevent depth clipping/other various issues
-            bgZ = -0.5f,
-            bgTileZ = -0.45f,
-            tileZ = -0.05f,
-            menuBgZ = 0.2f,
-            menuZ = 0.4f;
+            BG_Z = -0.5f,
+            BG_TILE_Z = -0.45f,
+            TILE_Z = -0.05f,
+            MENU_BG_Z = 0.2f,
+            MENU_Z = 0.4f;
 
 
     public static final SystemFont
 
-            loseFont    = SystemFont.getFont("Arial", 72, SystemFont.BOLD, true),
-            tileFont    = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true),
-            scoreFont   = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true);
+            LOSE_FONT = SystemFont.getFont("Arial", 72, SystemFont.BOLD, true),
+            TILE_FONT = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true),
+            SCORE_FONT = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true);
 }

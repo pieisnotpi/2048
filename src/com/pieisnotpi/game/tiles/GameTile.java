@@ -37,7 +37,7 @@ public class GameTile extends GameObject
         mesh = new TileMesh();
 
         createRenderable(0, 0, mesh);
-        text = new Text(Constants.tileFont, "", new Vector3f(), new Color(0, 0, 0), new Color(1, 1, 1), Camera.ORTHO2D_S);
+        text = new Text(Constants.TILE_FONT, "", new Vector3f(), new Color(0, 0, 0), new Color(1, 1, 1), Camera.ORTHO2D_S);
         addChild(text);
 
         text.getTransform().setScale(TEXT_SCALE*size);
@@ -121,7 +121,7 @@ public class GameTile extends GameObject
     {
         int maxX = tileX;
 
-        for(int x = tileX + 1; x < scene.w; x++)
+        for(int x = tileX + 1; x < scene.getBoardWidth(); x++)
         {
             GameTile existing = scene.gameTiles[x][tileY];
 
@@ -153,7 +153,7 @@ public class GameTile extends GameObject
     {
         int maxY = tileY;
 
-        for(int y = tileY + 1; y < scene.h; y++)
+        for(int y = tileY + 1; y < scene.getBoardHeight(); y++)
         {
             GameTile existing = scene.gameTiles[tileX][y];
 
@@ -169,7 +169,7 @@ public class GameTile extends GameObject
     {
         existing.merged = true;
         existing.setValue(existing.value*2);
-        scene.scoreText.setText("Score: " + (scene.score += existing.value));
+        scene.setScore(scene.getScore() + existing.value);
         moveTo(existing.tileX, existing.tileY, true);
     }
 

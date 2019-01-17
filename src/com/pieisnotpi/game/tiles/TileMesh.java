@@ -21,10 +21,10 @@ public class TileMesh extends Mesh<ColorTriangle>
 
         Color color = new Color(0, 0, 0);
 
-        addPrimitive(new ColorTriangle(new Vector3f(radii, 0, tileZ), new Vector3f(radii, size, tileZ), new Vector3f(size - radii, 0, tileZ), color, color, color));
-        addPrimitive(new ColorTriangle(new Vector3f(radii, size, tileZ), new Vector3f(size - radii, size, tileZ), new Vector3f(size - radii, 0, tileZ), color, color, color));
-        addPrimitive(new ColorTriangle(new Vector3f(0, radii, tileZ), new Vector3f(size, radii, tileZ), new Vector3f(0, size - radii, tileZ), color, color, color));
-        addPrimitive(new ColorTriangle(new Vector3f(size, radii, tileZ), new Vector3f(size, size - radii, tileZ), new Vector3f(0, size - radii, tileZ), color, color, color));
+        addPrimitive(new ColorTriangle(new Vector3f(radii, 0, TILE_Z), new Vector3f(radii, size, TILE_Z), new Vector3f(size - radii, 0, TILE_Z), color, color, color));
+        addPrimitive(new ColorTriangle(new Vector3f(radii, size, TILE_Z), new Vector3f(size - radii, size, TILE_Z), new Vector3f(size - radii, 0, TILE_Z), color, color, color));
+        addPrimitive(new ColorTriangle(new Vector3f(0, radii, TILE_Z), new Vector3f(size, radii, TILE_Z), new Vector3f(0, size - radii, TILE_Z), color, color, color));
+        addPrimitive(new ColorTriangle(new Vector3f(size, radii, TILE_Z), new Vector3f(size, size - radii, TILE_Z), new Vector3f(0, size - radii, TILE_Z), color, color, color));
 
         assembleCorner(size - radii, size - radii, radii, 0, color);
         assembleCorner(radii, size - radii, radii, halfPI, color);
@@ -34,14 +34,14 @@ public class TileMesh extends Mesh<ColorTriangle>
 
     private void assembleCorner(float dx, float dy, float radii, double offset, Color color)
     {
-        double angle = halfPI/cornerSides;
+        double angle = halfPI/ CORNER_SIDES;
 
-        for(int i = 0; i < cornerSides; i++)
+        for(int i = 0; i < CORNER_SIDES; i++)
         {
             double a0 = angle*i + offset, a1 = angle*(i+1) + offset;
             float x0 = dx + (float) (radii*Math.cos(a0)), y0 = dy + (float) (radii*Math.sin(a0)), x1 = dx + (float) (radii*Math.cos(a1)), y1 = dy + (float) (radii*Math.sin(a1));
 
-            addPrimitive(new ColorTriangle(new Vector3f(x0, y0, tileZ), new Vector3f(dx, dy, tileZ), new Vector3f(x1, y1, tileZ), color, color, color));
+            addPrimitive(new ColorTriangle(new Vector3f(x0, y0, TILE_Z), new Vector3f(dx, dy, TILE_Z), new Vector3f(x1, y1, TILE_Z), color, color, color));
         }
     }
 

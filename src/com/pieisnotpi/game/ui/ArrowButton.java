@@ -11,7 +11,7 @@ import com.pieisnotpi.engine.utility.Color;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
-import static com.pieisnotpi.game.Constants.menuZ;
+import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class ArrowButton extends UiObject
 {
@@ -27,7 +27,7 @@ public class ArrowButton extends UiObject
         transform.setCenter(size.x/2, size.y/2, 0);
         if(flip) transform.scaleCentered(-1, 1, 1);
 
-        ColorTriangle triangle = new ColorTriangle(new Vector3f(0, size.y/2, menuZ), new Vector3f(size.x, size.y, menuZ), new Vector3f(size.x, 0, menuZ), color, color, color);
+        ColorTriangle triangle = new ColorTriangle(new Vector3f(0, size.y/2, MENU_Z), new Vector3f(size.x, size.y, MENU_Z), new Vector3f(size.x, 0, MENU_Z), color, color, color);
         Mesh<ColorTriangle> mesh = new Mesh<ColorTriangle>(material, MeshConfig.TRIANGLE_STATIC).addPrimitive(triangle).build();
         createRenderable(0, 0, mesh);
     }
