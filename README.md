@@ -15,5 +15,5 @@ The theme files assign hexadecimal values to specific numerical tile values. For
 
 Requires LWJGL 3.1.2 build 13, JOML 1.9.0, the latest Pi-Engine build, and the latest OptionFilesLib build, which are included in the release versions
 
-![2048 Red](https://i.imgur.com/nlvSmic.png "2048 Red")
-![2048 Blue](https://i.imgur.com/14jjlrU.png "2048 Blue")
+![2048 Red](https://i.imgur.com/AVMIT8tm.png "2048 Red")
+![2048 Blue](https://i.imgur.com/EgKt3Yjm.png "2048 Blue")
