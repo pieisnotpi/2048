@@ -4,10 +4,10 @@ import com.pieisnotpi.engine.ui.text.font.SystemFont;
 
 public class Constants
 {
-    public static final int
+    public static int
 
             // The number of triangles per rounded corner. Ex. value of 4 = 4 sides per corner, 16 triangles per tile
-            CORNER_SIDES = 4;
+            CORNER_SIDES;
 
     public static float
 
@@ -15,25 +15,23 @@ public class Constants
             size,
 
             // Radii of tile corners
-            radii;
-
-    public static final float
+            radii,
 
             // Space between game tiles
-            TILE_SPACE = 0.04f,
+            TILE_SPACE,
 
             // Space between outer tiles and the background pane's outer edge
-            BG_SPACE = 0.04f,
+            BG_SPACE,
 
             // Determines whitespace around game board
-            BORDER = 2.5f,
+            BORDER,
 
             // Determines tile corner radii. Higher values mean smaller corners. Must be > 2
             // Radii = (size/RADII_DIV)
-            RADII_DIV = 6,
+            RADII_DIV,
 
             // Tile speed multiplier. Hire values mean faster tile movements
-            TILE_SPEED = 8f,
+            TILE_SPEED,
 
             // Depth values for all the rendered elements
             // Used to prevent depth clipping/other various issues
@@ -44,9 +42,9 @@ public class Constants
             MENU_Z = 0.4f;
 
 
-    public static final SystemFont
+    public static SystemFont
 
-            LOSE_FONT = SystemFont.getFont("Arial", 72, SystemFont.BOLD, true),
-            TILE_FONT = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true),
-            SCORE_FONT = SystemFont.getFont("Arial", 48, SystemFont.BOLD, true);
+            MENU_FONT,
+            TILE_FONT,
+            SCORE_FONT;
 }

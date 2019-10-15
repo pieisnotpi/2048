@@ -106,7 +106,7 @@ public class Background extends GameObject
 
     private void assembleCorner(float dx, float dy, float z, float radii, double offset, Color color, Mesh<ColorTriangle> mesh)
     {
-        double angle = halfPI/ CORNER_SIDES;
+        double angle = halfPI/CORNER_SIDES;
 
         for(int i = 0; i < CORNER_SIDES; i++)
         {

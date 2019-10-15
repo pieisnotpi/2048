@@ -47,7 +47,7 @@ public class TileMesh extends Mesh<ColorTriangle>
 
     public void setTileColor(Color color)
     {
-        primitives.forEach(r -> r.setColor(color));
+        getPrimitives().forEach(r -> r.setColor(color));
         build();
     }
 }

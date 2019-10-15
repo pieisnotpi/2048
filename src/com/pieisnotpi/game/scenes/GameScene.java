@@ -8,6 +8,7 @@ import com.pieisnotpi.engine.ui.UiObject;
 import com.pieisnotpi.engine.ui.text.Text;
 import com.pieisnotpi.engine.utility.Color;
 import com.pieisnotpi.game.parsers.ColorParser;
+import com.pieisnotpi.game.parsers.ConstantsParser;
 import com.pieisnotpi.game.tiles.BackTile;
 import com.pieisnotpi.game.tiles.Background;
 import com.pieisnotpi.game.tiles.GameTile;
@@ -16,8 +17,6 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static com.pieisnotpi.game.Constants.*;
@@ -29,7 +28,6 @@ public class GameScene extends Scene
     private int w, h, nw, nh, score = 0;
 
     private Background bg;
-    public List<GameTile> deletionQue = new ArrayList<>(10);
     public BackTile[][] backTiles;
     public GameTile[][] gameTiles;
     public ColorParser colors;
@@ -50,21 +48,20 @@ public class GameScene extends Scene
 
     public GameScene init() throws Exception
     {
-        super.init();
-    
+        ConstantsParser.parseConstants("options/consts.cfg");
         colors = new ColorParser("options/theme.cfg");
-        
+
         addCamera(new Camera(1, new Vector2f(0, 0), new Vector2f(1, 1)));
         clearColor.set(colors.getBackColor("bg"));
 
         setBoardSize(w, h);
 
         scoreText = new Text(SCORE_FONT, "Score: " + score, new Vector3f(), Camera.ORTHO2D_S);
-        addGameObject(scoreText);
         scoreText.setTextColor(colors.getTextColor(2));
         scoreText.setAlignment(UiObject.HAlignment.CENTER, UiObject.VAlignment.TOP, 0, -0.1f);
         scoreText.getTransform().setScale(0.002f);
         scoreText.setOutlineSize(0);
+        addGameObject(scoreText);
 
         optionsMenu = new OptionsMenu(w, h, colors.getTextColor(2), clearColor);
         addGameObject(optionsMenu);
@@ -98,6 +95,8 @@ public class GameScene extends Scene
             else removeGameObject(exitButton);
             
         }, null, null));
+
+        super.init();
 
         return this;
     }
@@ -147,7 +146,6 @@ public class GameScene extends Scene
         else
         {
             gameTiles[x][y] = new GameTile(x, y, value, size, this);
-            addGameObject(gameTiles[x][y]);
             bg.addChild(gameTiles[x][y]);
         }
     }
@@ -233,9 +231,7 @@ public class GameScene extends Scene
     {
         if(bg != null)
         {
-            clearBoard();
             bg.destroy();
-            removeGameObject(bg);
         }
 
         this.w = w;
@@ -297,7 +293,6 @@ public class GameScene extends Scene
         if(locked)
         {
             endMenu.openWithLoss(score);
-            //addGameObject(loseText);
             lost = true;
         }
     }
@@ -322,7 +317,6 @@ public class GameScene extends Scene
             else value = 4;
 
             GameTile t = gameTiles[x][y] = new GameTile(x, y, value, size, this);
-            addGameObject(t);
             bg.addChild(t);
         }
     }
@@ -455,23 +449,6 @@ public class GameScene extends Scene
         if(restart) resetGame();
 
         if(w != nw || h != nh) setBoardSize(nw, nh);
-    }
-
-    @Override
-    public void drawUpdate(float timeStep) throws Exception
-    {
-        super.drawUpdate(timeStep);
-
-        for(int i = 0; i < deletionQue.size(); i++)
-        {
-            GameTile g = deletionQue.get(i);
-            if(g.shouldDestroy)
-            {
-                g.destroy();
-                deletionQue.remove(g);
-                i--;
-            }
-        }
     }
 
     @Override

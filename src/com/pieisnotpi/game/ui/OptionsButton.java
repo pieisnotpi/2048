@@ -5,7 +5,6 @@ import com.pieisnotpi.engine.rendering.mesh.Mesh;
 import com.pieisnotpi.engine.rendering.mesh.MeshConfig;
 import com.pieisnotpi.engine.rendering.shaders.types.text.TextMaterial;
 import com.pieisnotpi.engine.rendering.shaders.types.text.TextQuad;
-import com.pieisnotpi.engine.rendering.textures.Sprite;
 import com.pieisnotpi.engine.rendering.textures.Texture;
 import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.UiObject;
@@ -19,7 +18,7 @@ import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class OptionsButton extends UiObject
 {
-    private static final CharSprite sprite = new CharSprite(new Sprite(0f, 0f, 1f, 1f), ' ', 0, 0);
+    private static final CharSprite sprite = new CharSprite(1, 1, 0, 0, 1, 1, 0, 0);
 
     private final TextMaterial material = new TextMaterial(Camera.ORTHO2D_S, Texture.getTextureFile("gear.png", Texture.FILTER_LINEAR));
     private GameScene scene;

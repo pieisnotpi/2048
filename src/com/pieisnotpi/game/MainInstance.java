@@ -73,11 +73,12 @@ class MainInstance extends GameInstance
                     for(int x = 0; x < s.getBoardWidth(); x++)
                     {
                         int value = input.readInt();
+                        if (value >= 2048) s.won = true;
                         if(value != 0 && value != -1) s.setTile(x, y, value);
                     }
                 }
             }
-            catch(IOException e) {}
+            catch(IOException ignored) {}
         }
         else s.init();
         

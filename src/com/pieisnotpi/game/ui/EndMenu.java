@@ -7,6 +7,7 @@ import com.pieisnotpi.engine.rendering.mesh.MeshConfig;
 import com.pieisnotpi.engine.rendering.shaders.types.color.ColorMaterial;
 import com.pieisnotpi.engine.rendering.shaders.types.color.ColorQuad;
 import com.pieisnotpi.engine.scene.GameObject;
+import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.UiObject;
 import com.pieisnotpi.engine.ui.text.Text;
 import com.pieisnotpi.engine.utility.Color;
@@ -14,7 +15,7 @@ import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.scenes.GameScene;
 import org.joml.Vector3f;
 
-import static com.pieisnotpi.game.Constants.LOSE_FONT;
+import static com.pieisnotpi.game.Constants.MENU_FONT;
 import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class EndMenu extends GameObject
@@ -50,27 +51,32 @@ public class EndMenu extends GameObject
 
     private float yMoveSpeed = 0, yDest;
     private boolean open = false, wasLoss = false;
-    private Text statusText;
+    private Text statusText, promptText;
 
     public EndMenu(Color buttonColor, Color bgColor)
     {
         getTransform().translate(0, 2, 0);
 
-        statusText = new Text(LOSE_FONT, "blank", new Vector3f(-0.8f, 0, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        statusText = new Text(MENU_FONT, "blank", new Vector3f(-0.8f, 0, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         statusText.setHAlignment(UiObject.HAlignment.CENTER, 0f);
         statusText.setVAlignment(UiObject.VAlignment.CENTER, 0.2f);
         statusText.getTransform().setScale(statusScale);
 
-        Text promptText = new Text(LOSE_FONT, "Press any button to continue", new Vector3f(0, -0.9f, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        promptText = new Text(MENU_FONT, "Press any button to continue", new Vector3f(0, -0.9f, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         promptText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         promptText.getTransform().setScale(promptScale);
-
-        addChild(statusText);
-        addChild(promptText);
 
         Mesh<ColorQuad> bg = new Mesh<>(new ColorMaterial(Camera.ORTHO2D_S), MeshConfig.QUAD_STATIC);
         bg.addPrimitive(new ColorQuad(-10, -1, Constants.MENU_BG_Z, 20, 2, 0, bgColor));
         createRenderable(0, 0, bg);
+    }
+
+    @Override
+    public void onRegister(Scene scene)
+    {
+        super.onRegister(scene);
+        addChild(statusText);
+        addChild(promptText);
     }
 
     public void openWithWin(int score)

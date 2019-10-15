@@ -15,7 +15,7 @@ import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class ArrowButton extends UiObject
 {
-    private final ColorMaterial material = new ColorMaterial(Camera.ORTHO2D_S);
+    private static final ColorMaterial material = new ColorMaterial(Camera.ORTHO2D_S);
     private Vector3f pos;
 
     public ArrowButton(float xPos, float yPos, Color color, boolean flip)

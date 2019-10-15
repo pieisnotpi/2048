@@ -7,6 +7,7 @@ import com.pieisnotpi.engine.rendering.mesh.MeshConfig;
 import com.pieisnotpi.engine.rendering.shaders.types.color.ColorMaterial;
 import com.pieisnotpi.engine.rendering.shaders.types.color.ColorQuad;
 import com.pieisnotpi.engine.scene.GameObject;
+import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.UiObject;
 import com.pieisnotpi.engine.ui.text.Text;
 import com.pieisnotpi.engine.utility.Color;
@@ -14,7 +15,7 @@ import com.pieisnotpi.game.Constants;
 import com.pieisnotpi.game.scenes.GameScene;
 import org.joml.Vector3f;
 
-import static com.pieisnotpi.game.Constants.LOSE_FONT;
+import static com.pieisnotpi.game.Constants.MENU_FONT;
 import static com.pieisnotpi.game.Constants.MENU_Z;
 
 public class OptionsMenu extends GameObject
@@ -26,6 +27,8 @@ public class OptionsMenu extends GameObject
 
     private float yMoveSpeed = 0, yDest;
     private boolean open = false;
+    private ArrowButton wLeft, wRight, hLeft, hRight;
+    private Text wText, wValueText, hText, hValueText;
 
     public OptionsMenu(int width, int height, Color buttonColor, Color bgColor)
     {
@@ -34,15 +37,15 @@ public class OptionsMenu extends GameObject
 
         getTransform().translate(0, 2, 0);
 
-        Text wText = new Text(LOSE_FONT, "Width", new Vector3f(0, wPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        wText = new Text(MENU_FONT, "Width", new Vector3f(0, wPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         wText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         wText.getTransform().setScale(textScale);
 
-        Text wValueText = new Text(LOSE_FONT, w + "", new Vector3f(0, wPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        wValueText = new Text(MENU_FONT, w + "", new Vector3f(0, wPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         wValueText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         wValueText.getTransform().setScale(valueScale);
 
-        ArrowButton wLeft = new ArrowButton(-arrowOffset, wPos, buttonColor, false)
+        wLeft = new ArrowButton(-arrowOffset, wPos, buttonColor, false)
         {
             @Override
             public void onLeftClick()
@@ -55,7 +58,7 @@ public class OptionsMenu extends GameObject
             }
         };
 
-        ArrowButton wRight = new ArrowButton(arrowOffset, wPos, buttonColor, true)
+        wRight = new ArrowButton(arrowOffset, wPos, buttonColor, true)
         {
             @Override
             public void onLeftClick()
@@ -68,15 +71,15 @@ public class OptionsMenu extends GameObject
             }
         };
 
-        Text hText = new Text(LOSE_FONT, "Height", new Vector3f(0, hPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        hText = new Text(MENU_FONT, "Height", new Vector3f(0, hPos + textOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         hText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         hText.getTransform().setScale(textScale);
 
-        Text hValueText = new Text(LOSE_FONT, h + "", new Vector3f(0, hPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
+        hValueText = new Text(MENU_FONT, h + "", new Vector3f(0, hPos - valOffset, MENU_Z), buttonColor, buttonColor, Camera.ORTHO2D_S);
         hValueText.setHAlignment(UiObject.HAlignment.CENTER, 0);
         hValueText.getTransform().setScale(valueScale);
 
-        ArrowButton hLeft = new ArrowButton(-arrowOffset, hPos, buttonColor, false)
+        hLeft = new ArrowButton(-arrowOffset, hPos, buttonColor, false)
         {
             @Override
             public void onLeftClick()
@@ -89,7 +92,7 @@ public class OptionsMenu extends GameObject
             }
         };
 
-        ArrowButton hRight = new ArrowButton(arrowOffset, hPos, buttonColor, true)
+        hRight = new ArrowButton(arrowOffset, hPos, buttonColor, true)
         {
             @Override
             public void onLeftClick()
@@ -102,6 +105,17 @@ public class OptionsMenu extends GameObject
             }
         };
 
+
+
+        Mesh<ColorQuad> bg = new Mesh<>(new ColorMaterial(Camera.ORTHO2D_S), MeshConfig.QUAD_STATIC);
+        bg.addPrimitive(new ColorQuad(-10, -1, Constants.MENU_BG_Z, 20, 2, 0, bgColor));
+        createRenderable(0, 0, bg);
+    }
+
+    @Override
+    public void onRegister(Scene scene)
+    {
+        super.onRegister(scene);
         addChild(wLeft);
         addChild(wRight);
         addChild(wText);
@@ -111,10 +125,6 @@ public class OptionsMenu extends GameObject
         addChild(hRight);
         addChild(hText);
         addChild(hValueText);
-
-        Mesh<ColorQuad> bg = new Mesh<>(new ColorMaterial(Camera.ORTHO2D_S), MeshConfig.QUAD_STATIC);
-        bg.addPrimitive(new ColorQuad(-10, -1, Constants.MENU_BG_Z, 20, 2, 0, bgColor));
-        createRenderable(0, 0, bg);
     }
 
     public void openMenu()

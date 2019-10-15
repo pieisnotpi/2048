@@ -2,6 +2,7 @@ package com.pieisnotpi.game.tiles;
 
 import com.pieisnotpi.engine.rendering.cameras.Camera;
 import com.pieisnotpi.engine.scene.GameObject;
+import com.pieisnotpi.engine.scene.Scene;
 import com.pieisnotpi.engine.ui.text.Text;
 import com.pieisnotpi.engine.utility.Color;
 import com.pieisnotpi.game.Constants;
@@ -15,7 +16,7 @@ public class GameTile extends GameObject
     private Text text;
     private GameScene scene;
     private TileMesh mesh;
-    public boolean merged = false, shouldDestroy = false;
+    public boolean merged = false;
 
     private MoveAnimation moveAnimation = new MoveAnimation(this);
     private ScaleAnimation scaleAnimation = new ScaleAnimation(this);
@@ -38,7 +39,6 @@ public class GameTile extends GameObject
 
         createRenderable(0, 0, mesh);
         text = new Text(Constants.TILE_FONT, "", new Vector3f(), new Color(0, 0, 0), new Color(1, 1, 1), Camera.ORTHO2D_S);
-        addChild(text);
 
         text.getTransform().setScale(TEXT_SCALE*size);
 
@@ -48,6 +48,13 @@ public class GameTile extends GameObject
         scaleAnimation.start(0.1f, 1f);
 
         setValue(value);
+    }
+
+    @Override
+    public void onRegister(Scene scene)
+    {
+        super.onRegister(scene);
+        addChild(text);
     }
 
     public void moveTo(int tileX, int tileY, boolean destroyOnFinish)
@@ -67,9 +74,7 @@ public class GameTile extends GameObject
         if(!destroyOnFinish) scene.gameTiles[tileX][tileY] = this;
         else
         {
-            scene.deletionQue.add(this);
             renderable.getTransform().translate(0, 0, -0.1f);
-
         }
 
         this.destroyOnFinish = destroyOnFinish;
@@ -81,7 +86,7 @@ public class GameTile extends GameObject
         moveAnimation.process(timeStep);
         scaleAnimation.process(timeStep);
 
-        if(moveAnimation.hasFinished() && destroyOnFinish) flagForDestroy();
+        if(moveAnimation.hasFinished() && destroyOnFinish) destroy();
     }
 
     public void setValue(int value)
@@ -93,6 +98,7 @@ public class GameTile extends GameObject
         mesh.setTileColor(tileColor);
         text.setTextColor(textColor);
         text.setText(value + "");
+        text.getTransform().setScale(Math.min((7f/10)*size/text.getSize().y, size/text.getSize().x));
         text.getTransform().setTranslateAbs(size/2 - text.getWidth()/2, size/2 - text.getHeight()/2, 0);
     }
     
@@ -171,17 +177,6 @@ public class GameTile extends GameObject
         existing.setValue(existing.value*2);
         scene.setScore(scene.getScore() + existing.value);
         moveTo(existing.tileX, existing.tileY, true);
-    }
-
-    public void flagForDestroy()
-    {
-        shouldDestroy = true;
-    }
-
-    public void destroy()
-    {
-        super.destroy();
-        shouldDestroy = false;
     }
 
     @Override
